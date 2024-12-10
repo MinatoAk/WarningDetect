@@ -1,6 +1,6 @@
 package com.xuanxuan.warningdetect.ZhiPuTest;
 
-import com.xuanxuan.warningdetect.manager.ZhiPuAIManager;
+import com.xuanxuan.warningdetect.manager.ZhiPuAIManagerSpringBoot;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 public class ZhiPuAITest {
 
     @Resource
-    private ZhiPuAIManager zhiPuAIManager;
+    private ZhiPuAIManagerSpringBoot zhiPuAIManager;
 
     @Test
     public void test() {
