@@ -10,4 +10,9 @@ public interface FilePathConstant {
      * Java 日志
      */
     String JAVA_LOG_PATH = "logs/java.log";
+
+    /**
+     * 大模型结果日志
+     */
+    String RESULT_LOG_PATH = "logs/LLMResult.log";
 }

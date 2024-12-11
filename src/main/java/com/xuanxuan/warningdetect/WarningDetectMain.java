@@ -47,6 +47,15 @@ public class WarningDetectMain {
      */
     private static PromptBuilder promptBuilder = new PromptBuilder();
 
+    /**
+     * 记录大模型判断的结果
+     */
+    private static Integer TPNum = 0;
+    private static Integer TNNum = 0;
+    private static Integer FPNum = 0;
+    private static Integer FNNum = 0;
+    private static Integer UKNum = 0;
+
     public static void main(String[] args) {
         WarningDetectMain warningDetectMain = new WarningDetectMain();
 
@@ -57,7 +66,7 @@ public class WarningDetectMain {
         try (FileOutputStream fos = new FileOutputStream(FilePathConstant.JAVA_LOG_PATH);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            for (int i = 0; i < 5; i ++ ) {
+            for (int i = 0; i < 10; i ++ ) {
                 WarningData warningData = warningDetectMain.javaWarningData.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i + 1, warningData.getId());
 
@@ -67,13 +76,40 @@ public class WarningDetectMain {
 
                 // 2.2) 解析出大模型给的结论
                 String finalLabel = warningDetectMain.analyzeLabel(res);
+                String trueLabel = warningData.getLabel();
 
-                // 2.3) 日志记录大模型回答信息
+                // 2.3) 统计大模型结果
+                if ("TP".equals(finalLabel) && "TP".equals(trueLabel)) TPNum ++;
+                else if ("TP".equals(finalLabel) && "FP".equals(trueLabel)) FPNum ++;
+                else if ("FP".equals(finalLabel) && "TP".equals(trueLabel)) FNNum ++;
+                else if ("FP".equals(finalLabel) && "FP".equals(trueLabel)) TNNum ++;
+                else UKNum ++;
+
+                // 2.4) 日志记录大模型回答信息
                 String formattedRes = String.format("%d - Java Test Case %d:\n%s\n", i, warningData.getId(), res);
                 osw.write(formattedRes);
-                osw.write("Final Label: " + finalLabel + "\n");
+                osw.write("Final Label: " + finalLabel + " True Label:" + trueLabel + "\n");
                 osw.write("------------------------------------------------------------\n\n");
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 3) 评估结果计算，并且记录日志
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.RESULT_LOG_PATH);
+             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+
+
+            osw.write("Total Test Cases Num: " + warningDetectMain.javaWarningData.size() + "\n");
+            osw.write("TP: " + TPNum + " TN: " + TNNum + " FP: " + FPNum + " FN: " + FNNum + " UK: " + UKNum + "\n");
+
+            double accuracy = 1.0 * (TPNum + TNNum) / (TPNum + TNNum + FPNum + FNNum);
+            double precision = 1.0 * TPNum / (TPNum + FPNum);
+            double recall = 1.0 * TPNum / (TPNum + FNNum);
+            double f1 = 2 * precision * recall / (precision + recall);
+
+            osw.write("Accuracy: " + accuracy + " Precision: " + precision + "\nRecall: " + recall + " F1: " + f1 +"\n\n");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,6 +145,6 @@ public class WarningDetectMain {
         if ("f".equals(labelStr) || "F".equals(labelStr)) return "FP";
         else if ("r".equals(labelStr) || "R".equals(labelStr)) return "TP";
 
-        return "UNKNOWN";
+        return "UK";
     }
 }
