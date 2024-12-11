@@ -79,7 +79,7 @@ public class ZhiPuAIManager {
      */
     public String doRequest(List<ChatMessage> messages ,Boolean stream, Float temperature, ClientV4 clientV4) {
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model(Constants.ModelChatGLM4)
+                .model(Constants.ModelChatGLM3TURBO)
                 .stream(stream)
                 .temperature(temperature)
                 .invokeMethod(Constants.invokeMethod)
