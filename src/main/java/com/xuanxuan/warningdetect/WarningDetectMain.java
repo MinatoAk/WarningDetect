@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -26,11 +27,6 @@ public class WarningDetectMain {
      * 存放 Java 警告数据集
      */
     private static final List<WarningData> javaWarningData = new ArrayList<>();
-
-    /**
-     * 存放大模型运行超时的数据任务
-     */
-    private static final List<Integer> errorWarningData  = new ArrayList<>();
 
     /**
      * 系统预设
@@ -68,10 +64,11 @@ public class WarningDetectMain {
         warningDetectMain.getJavaData();
 
         // 2) 调用大模型进行警告检测，并且记录日志
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.CHATGLM3TURBO_BASIC_LOG_PATH);
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.CHATGLM3TURBO_BASIC_LOG_PATH, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            for (int i = 0; i < 10; i ++ ) {
+            // todo: 这里可以提交到线程池，并发提高效率
+            for (int i = 749; i < javaWarningData.size(); i ++ ) {
                 WarningData warningData = javaWarningData.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
 
@@ -98,8 +95,9 @@ public class WarningDetectMain {
                     osw.write("------------------------------------------------------------\n\n");
 
                 } catch (Exception e) {
-                    errorWarningData.add(i);
                     log.error("[x ERROR x] Error Test Case {}: Index {}", i, warningData.getId());
+                    // 2.5) 调用超时的记录，最后可以单独请求重试
+                    warningDetectMain.recordErrorData(i, warningData.getId());
                 }
             }
         } catch (IOException e) {
@@ -108,9 +106,6 @@ public class WarningDetectMain {
 
         // 3) 评估结果计算，并且记录日志
         warningDetectMain.getResultData();
-
-        // 4) 记录一下超时的任务
-        warningDetectMain.recordErrorData();
     }
 
     /**
@@ -149,7 +144,7 @@ public class WarningDetectMain {
      * 计算 F1, Recall, Precision, Accuracy
      */
     private void getResultData() {
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.RESULT_LOG_PATH);
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.RESULT_LOG_PATH, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
 
@@ -171,13 +166,11 @@ public class WarningDetectMain {
     /**
      * 记录一下超时的任务，后面重做
      */
-    private void recordErrorData() {
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.ERROR_DATA_LOG_PATH);
+    private void recordErrorData(int i, int index) {
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.ERROR_DATA_LOG_PATH, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            for (int idx : errorWarningData) {
-                System.out.println(idx);
-            }
+            osw.write("i: " + i + " index: " + index + "\n");
 
         } catch (IOException e) {
             e.printStackTrace();
