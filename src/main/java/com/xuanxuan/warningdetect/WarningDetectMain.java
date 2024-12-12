@@ -25,7 +25,12 @@ public class WarningDetectMain {
     /**
      * 存放 Java 警告数据集
      */
-    private List<WarningData> javaWarningData = new ArrayList<>();
+    private static final List<WarningData> javaWarningData = new ArrayList<>();
+
+    /**
+     * 存放大模型运行超时的数据任务
+     */
+    private static final List<Integer> errorWarningData  = new ArrayList<>();
 
     /**
      * 系统预设
@@ -35,17 +40,17 @@ public class WarningDetectMain {
     /**
      * 智谱大模型客户端
      */
-    private ClientV4 clientV4 = new ClientV4.Builder(APIKeys.ZHIPU_AI_KEY).build();
+    private final ClientV4 clientV4 = new ClientV4.Builder(APIKeys.ZHIPU_AI_KEY).build();
 
     /**
      * 智谱大模型封装方法
      */
-    private static ZhiPuAIManager zhiPuAIManager = new ZhiPuAIManager();
+    private static final ZhiPuAIManager zhiPuAIManager = new ZhiPuAIManager();
 
     /**
      * 用户 Prompt 构造器
      */
-    private static PromptBuilder promptBuilder = new PromptBuilder();
+    private static final PromptBuilder promptBuilder = new PromptBuilder();
 
     /**
      * 记录大模型判断的结果
@@ -63,57 +68,49 @@ public class WarningDetectMain {
         warningDetectMain.getJavaData();
 
         // 2) 调用大模型进行警告检测，并且记录日志
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.JAVA_LOG_PATH);
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.CHATGLM3TURBO_BASIC_LOG_PATH);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
             for (int i = 0; i < 10; i ++ ) {
-                WarningData warningData = warningDetectMain.javaWarningData.get(i);
-                log.info("[x] Now Running Test Case {}: Index {}", i + 1, warningData.getId());
+                WarningData warningData = javaWarningData.get(i);
+                log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
 
-                // 2.1) 请求大模型回答
-                String userPrompt = promptBuilder.buildUserPrompt(warningData);
-                String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
+                try {
+                    // 2.1) 请求大模型回答
+                    String userPrompt = promptBuilder.buildUserPrompt(warningData);
+                    String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
 
-                // 2.2) 解析出大模型给的结论
-                String finalLabel = warningDetectMain.analyzeLabel(res);
-                String trueLabel = warningData.getLabel();
+                    // 2.2) 解析出大模型给的结论
+                    String finalLabel = warningDetectMain.analyzeLabel(res);
+                    String trueLabel = warningData.getLabel();
 
-                // 2.3) 统计大模型结果
-                if ("TP".equals(finalLabel) && "TP".equals(trueLabel)) TPNum ++;
-                else if ("TP".equals(finalLabel) && "FP".equals(trueLabel)) FPNum ++;
-                else if ("FP".equals(finalLabel) && "TP".equals(trueLabel)) FNNum ++;
-                else if ("FP".equals(finalLabel) && "FP".equals(trueLabel)) TNNum ++;
-                else UKNum ++;
+                    // 2.3) 统计大模型结果
+                    if ("TP".equals(finalLabel) && "TP".equals(trueLabel)) TPNum ++;
+                    else if ("TP".equals(finalLabel) && "FP".equals(trueLabel)) FPNum ++;
+                    else if ("FP".equals(finalLabel) && "TP".equals(trueLabel)) FNNum ++;
+                    else if ("FP".equals(finalLabel) && "FP".equals(trueLabel)) TNNum ++;
+                    else UKNum ++;
 
-                // 2.4) 日志记录大模型回答信息
-                String formattedRes = String.format("%d - Java Test Case %d:\n%s\n", i, warningData.getId(), res);
-                osw.write(formattedRes);
-                osw.write("Final Label: " + finalLabel + " True Label:" + trueLabel + "\n");
-                osw.write("------------------------------------------------------------\n\n");
+                    // 2.4) 日志记录大模型回答信息
+                    String formattedRes = String.format("%d - Java Test Case %d:\n%s\n", i, warningData.getId(), res);
+                    osw.write(formattedRes);
+                    osw.write("Final Label: " + finalLabel + " True Label:" + trueLabel + "\n");
+                    osw.write("------------------------------------------------------------\n\n");
+
+                } catch (Exception e) {
+                    errorWarningData.add(i);
+                    log.error("[x ERROR x] Error Test Case {}: Index {}", i, warningData.getId());
+                }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // 3) 评估结果计算，并且记录日志
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.RESULT_LOG_PATH);
-             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+        warningDetectMain.getResultData();
 
-
-            osw.write("Total Test Cases Num: " + warningDetectMain.javaWarningData.size() + "\n");
-            osw.write("TP: " + TPNum + " TN: " + TNNum + " FP: " + FPNum + " FN: " + FNNum + " UK: " + UKNum + "\n");
-
-            double accuracy = 1.0 * (TPNum + TNNum) / (TPNum + TNNum + FPNum + FNNum);
-            double precision = 1.0 * TPNum / (TPNum + FPNum);
-            double recall = 1.0 * TPNum / (TPNum + FNNum);
-            double f1 = 2 * precision * recall / (precision + recall);
-
-            osw.write("Accuracy: " + accuracy + " Precision: " + precision + "\nRecall: " + recall + " F1: " + f1 +"\n\n");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // 4) 记录一下超时的任务
+        warningDetectMain.recordErrorData();
     }
 
     /**
@@ -146,5 +143,44 @@ public class WarningDetectMain {
         else if ("r".equals(labelStr) || "R".equals(labelStr)) return "TP";
 
         return "UK";
+    }
+
+    /**
+     * 计算 F1, Recall, Precision, Accuracy
+     */
+    private void getResultData() {
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.RESULT_LOG_PATH);
+             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+
+
+            osw.write("Total Test Cases Num: " + javaWarningData.size() + "\n");
+            osw.write("TP: " + TPNum + " TN: " + TNNum + " FP: " + FPNum + " FN: " + FNNum + " UK: " + UKNum + "\n");
+
+            double accuracy = 1.0 * (TPNum + TNNum) / (TPNum + TNNum + FPNum + FNNum);
+            double precision = 1.0 * TPNum / (TPNum + FPNum);
+            double recall = 1.0 * TPNum / (TPNum + FNNum);
+            double f1 = 2 * precision * recall / (precision + recall);
+
+            osw.write("Accuracy: " + accuracy + " Precision: " + precision + "\nRecall: " + recall + " F1: " + f1 +"\n\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 记录一下超时的任务，后面重做
+     */
+    private void recordErrorData() {
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.ERROR_DATA_LOG_PATH);
+             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+
+            for (int idx : errorWarningData) {
+                System.out.println(idx);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
