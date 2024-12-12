@@ -19,5 +19,6 @@ public interface FilePathConstant {
     /**
      * 日志路径: <model><promptTemplate>
      */
-    String CHATGLM3TURBO_BASIC_LOG_PATH = "logs/ChatGLM3Turbo_Basic.log";
+    String CHATGLM3TURBO_BASIC_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_Basic.log";
+    String CHATGLM3TURBO_BAP_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_BAP_COT.log";
 }

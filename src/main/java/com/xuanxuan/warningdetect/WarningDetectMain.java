@@ -31,7 +31,7 @@ public class WarningDetectMain {
     /**
      * 系统预设
      */
-    private static final String systemPrompt = PromptTemplate.BASIC_SYSTEM_PROMPT;
+    private static final String systemPrompt = PromptTemplate.BAP_COT_PROMPT;
 
     /**
      * 智谱大模型客户端
@@ -64,11 +64,11 @@ public class WarningDetectMain {
         warningDetectMain.getJavaData();
 
         // 2) 调用大模型进行警告检测，并且记录日志
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.CHATGLM3TURBO_BASIC_LOG_PATH, true);
+        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.CHATGLM3TURBO_BAP_COT_LOG_PATH, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
             // todo: 这里可以提交到线程池，并发提高效率
-            for (int i = 749; i < javaWarningData.size(); i ++ ) {
+            for (int i = 0; i < javaWarningData.size(); i ++ ) {
                 WarningData warningData = javaWarningData.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
 

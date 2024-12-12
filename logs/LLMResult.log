@@ -1,8 +1,16 @@
 Model: ChatGLM-3-Turbo
 Prompt: basic
+DataSet: Java
 Total Test Cases Num: 1074
 TP: 124 TN: 345 FP: 132 FN: 239 UK: 234
 Accuracy: 0.5583333333333333 Precision: 0.484375
 Recall: 0.3415977961432507 F1: 0.40064620355411956
 ------------------------------------------------------------------------
-
+Model: ChatGLM-3-Turbo
+Prompt: BAP_COT
+DataSet: Java
+Total Test Cases Num: 932
+TP: 130 TN: 196 FP: 218 FN: 184 UK: 204
+Accuracy: 0.4478021978021978 Precision: 0.3735632183908046
+Recall: 0.4140127388535032 F1: 0.392749244712991
+------------------------------------------------------------------------

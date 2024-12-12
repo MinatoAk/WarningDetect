@@ -10,11 +10,11 @@ import java.nio.charset.StandardCharsets;
 public class CalculateSumResultData {
 
     public static void main(String[] args) {
-        int TP = 30 + 24 + 31 + 39;
-        int TN = 75 + 95 + 64 + 111;
-        int FP = 31 + 21 + 31 + 49;
-        int FN = 59 + 66 + 57 + 57;
-        int UK = 50 + 40 + 64 + 80;
+        int TP = 51 + 79;
+        int TN = 66 + 130;
+        int FP = 97 + 121;
+        int FN = 76 + 108;
+        int UK = 69 + 135;
 
         int sum = TP + TN + FP + FN + UK;
 
