@@ -8,7 +8,7 @@ import com.xuanxuan.warningdetect.constant.FilePathConstant;
 import com.xuanxuan.warningdetect.entity.WarningData;
 import com.xuanxuan.warningdetect.manager.ZhiPuAIManager;
 import com.xuanxuan.warningdetect.promptbuilder.PromptBuilder;
-import com.xuanxuan.warningdetect.promptbuilder.PromptTemplate;
+import com.xuanxuan.warningdetect.promptbuilder.JavaPromptTemplate;
 import com.zhipu.oapi.ClientV4;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +30,12 @@ public class WarningDetectMain {
     /**
      * 系统预设
      */
-    private static final String systemPrompt = PromptTemplate.BAP_COT_PROMPT;
+    private static final String systemPrompt = JavaPromptTemplate.PER_COT_PROMPT;
+
+    /**
+     * 日志记录位置
+     */
+    private static final String logFilePath = FilePathConstant.CHATGLM3TURBO_PER_COT_LOG_PATH;
 
     /**
      * 智谱大模型客户端
@@ -64,10 +68,9 @@ public class WarningDetectMain {
         warningDetectMain.getJavaData();
 
         // 2) 调用大模型进行警告检测，并且记录日志
-        try (FileOutputStream fos = new FileOutputStream(FilePathConstant.CHATGLM3TURBO_BAP_COT_LOG_PATH, true);
+        try (FileOutputStream fos = new FileOutputStream(logFilePath, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            // todo: 这里可以提交到线程池，并发提高效率
             for (int i = 0; i < javaWarningData.size(); i ++ ) {
                 WarningData warningData = javaWarningData.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
@@ -147,8 +150,9 @@ public class WarningDetectMain {
         try (FileOutputStream fos = new FileOutputStream(FilePathConstant.RESULT_LOG_PATH, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
+            int sum = TPNum + TNNum + FPNum + FNNum + UKNum;
 
-            osw.write("Total Test Cases Num: " + javaWarningData.size() + "\n");
+            osw.write("Total Test Cases Num: " + sum + "\n");
             osw.write("TP: " + TPNum + " TN: " + TNNum + " FP: " + FPNum + " FN: " + FNNum + " UK: " + UKNum + "\n");
 
             double accuracy = 1.0 * (TPNum + TNNum) / (TPNum + TNNum + FPNum + FNNum);
