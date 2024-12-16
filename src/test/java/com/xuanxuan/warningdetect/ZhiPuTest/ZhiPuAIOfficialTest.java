@@ -21,8 +21,8 @@ public class ZhiPuAIOfficialTest {
 
     @Test
     public void test() {
-        // 1) 设置您的 API_KEY
-        String apiKey = "f1dd7e9a1ce63e0b3eda78caca8b81e1.BeWAzKPz6ViT09Ha";
+        // todo: 1) 设置您的 API_KEY
+        String apiKey = "";
 
         // 2) 创建客户端
         ClientV4 client = new ClientV4.Builder(apiKey).build();

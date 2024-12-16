@@ -31,7 +31,7 @@ public class WarningDetectMain {
     private static final List<WarningData> warningDataList = new ArrayList<>();
 
     // todo: 修改系统预设为希望运行的提示词模板
-    private static final String systemPrompt = cppPromptTemplate.BASIC_SYSTEM_PROMPT;
+    private static final String systemPrompt = cppPromptTemplate.MULTIPLE_CHAT_SYSTEM_PROMPT;
 
     // todo: 修改日志位置为期望的日志路径
     private static final String logFilePath = FilePathConstant.TEST_LOG_PATH;
@@ -77,6 +77,7 @@ public class WarningDetectMain {
 
                 try {
                     // 2.1) 请求大模型回答
+                    // todo: 如果是多轮对话，需要使用多轮对话构造器
                     String userPrompt = promptBuilder.buildUserPrompt(warningData);
                     String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
 
