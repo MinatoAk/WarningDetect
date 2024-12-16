@@ -7,6 +7,7 @@ import com.zhipu.oapi.service.v4.model.ChatMessage;
 import com.zhipu.oapi.service.v4.model.ChatMessageRole;
 import com.zhipu.oapi.service.v4.model.ModelApiResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +16,28 @@ import java.util.List;
  * 智谱 AI 官方示例 demo
  */
 
-// @SpringBootTest
+@SpringBootTest
 public class ZhiPuAIOfficialTest {
 
     @Test
     public void test() {
         // 1) 设置您的 API_KEY
-        String apiKey = "";
+        String apiKey = "f1dd7e9a1ce63e0b3eda78caca8b81e1.BeWAzKPz6ViT09Ha";
 
         // 2) 创建客户端
         ClientV4 client = new ClientV4.Builder(apiKey).build();
 
         // 3) 构造请求
         List<ChatMessage> messages = new ArrayList<>();
-        ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(), "作为一名营销专家，请为智谱开放平台创作一个吸引人的slogan");
-        messages.add(chatMessage);
+        ChatMessage chatMessage1 = new ChatMessage(ChatMessageRole.USER.value(), "你好，我是轩轩，很高兴认识你");
+        messages.add(chatMessage1);
+        ChatMessage chatMessage2 = new ChatMessage(ChatMessageRole.ASSISTANT.value(),
+                "你好，轩轩！很高兴认识你，有什么我可以帮助你的吗？无论是学习、娱乐还是其他方面的问题，都可以随时问我哦！");
+        messages.add(chatMessage2);
+        ChatMessage chatMessage3 = new ChatMessage(ChatMessageRole.USER.value(), "我是谁");
+        messages.add(chatMessage3);
+
+
         String requestId = String.valueOf(System.currentTimeMillis());
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
                 .model(Constants.ModelChatGLM4)
