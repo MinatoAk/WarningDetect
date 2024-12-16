@@ -5,7 +5,7 @@ import com.xuanxuan.warningdetect.entity.WarningData;
 public class PromptBuilder {
 
     /**
-     * 构造 Java Test Case 的 userPrompt
+     * 构造 Test Case 的 userPrompt
      */
     public String buildUserPrompt(WarningData warningData) {
         StringBuilder userMessage = new StringBuilder();

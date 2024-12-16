@@ -7,6 +7,11 @@ public interface FilePathConstant {
     String JAVA_DATA_PATH = "dataset/java.xlsx";
 
     /**
+     * cpp 数据集路径
+     */
+    String CPP_DATA_PATH = "dataset/cpp.xlsx";
+
+    /**
      * 大模型结果日志
      */
     String RESULT_LOG_PATH = "logs/LLMResult.log";
@@ -17,15 +22,22 @@ public interface FilePathConstant {
     String ERROR_DATA_LOG_PATH = "logs/error_data_index.log";
 
     /**
-     * Java 日志路径: </><model><promptTemplate>
+     * 测试日志
      */
-    String CHATGLM3TURBO_BASIC_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_Basic.log";
-    String CHATGLM3TURBO_COR_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_COR_COT.log";
-    String CHATGLM3TURBO_BAP_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_BAP_COT.log";
-    String CHATGLM3TURBO_DOD_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_DOD_COT.log";
-    String CHATGLM3TURBO_EXP_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_EXP_COT.log";
-    String CHATGLM3TURBO_I18N_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_I18N_COT.log";
-    String CHATGLM3TURBO_MAL_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_MAL_COT.log";
-    String CHATGLM3TURBO_MUL_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_MUL_COT.log";
-    String CHATGLM3TURBO_PER_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_PER_COT.log";
+    String TEST_LOG_PATH = "logs/test.log";
+
+    /**
+     * 日志路径: <cpp / Java><model><promptTemplate>
+     */
+    String JAVA_CHATGLM3TURBO_BASIC_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_Basic.log";
+    String JAVA_CHATGLM3TURBO_COR_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_COR_COT.log";
+    String JAVA_CHATGLM3TURBO_BAP_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_BAP_COT.log";
+    String JAVA_CHATGLM3TURBO_DOD_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_DOD_COT.log";
+    String JAVA_CHATGLM3TURBO_EXP_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_EXP_COT.log";
+    String JAVA_CHATGLM3TURBO_I18N_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_I18N_COT.log";
+    String JAVA_CHATGLM3TURBO_MAL_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_MAL_COT.log";
+    String JAVA_CHATGLM3TURBO_MUL_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_MUL_COT.log";
+    String JAVA_CHATGLM3TURBO_PER_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/ChatGLM3Turbo_PER_COT.log";
+
+    String CPP_CHATGLM3TURBO_BASIC_LOG_PATH = "logs/cpp/ChatGLM3Turbo/ChatGLM3Turbo_Basic.log";
 }

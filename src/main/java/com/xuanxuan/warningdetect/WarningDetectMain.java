@@ -6,9 +6,12 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.xuanxuan.warningdetect.constant.APIKeys;
 import com.xuanxuan.warningdetect.constant.FilePathConstant;
 import com.xuanxuan.warningdetect.entity.WarningData;
+import com.xuanxuan.warningdetect.exception.BusinessException;
+import com.xuanxuan.warningdetect.exception.ErrorCode;
 import com.xuanxuan.warningdetect.manager.ZhiPuAIManager;
 import com.xuanxuan.warningdetect.promptbuilder.PromptBuilder;
 import com.xuanxuan.warningdetect.promptbuilder.JavaPromptTemplate;
+import com.xuanxuan.warningdetect.promptbuilder.cppPromptTemplate;
 import com.zhipu.oapi.ClientV4;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,19 +26,15 @@ import java.util.List;
 public class WarningDetectMain {
 
     /**
-     * 存放 Java 警告数据集
+     * 存放警告数据集
      */
-    private static final List<WarningData> javaWarningData = new ArrayList<>();
+    private static final List<WarningData> warningDataList = new ArrayList<>();
 
-    /**
-     * 系统预设
-     */
-    private static final String systemPrompt = JavaPromptTemplate.PER_COT_PROMPT;
+    // todo: 修改系统预设为希望运行的提示词模板
+    private static final String systemPrompt = cppPromptTemplate.BASIC_SYSTEM_PROMPT;
 
-    /**
-     * 日志记录位置
-     */
-    private static final String logFilePath = FilePathConstant.CHATGLM3TURBO_PER_COT_LOG_PATH;
+    // todo: 修改日志位置为期望的日志路径
+    private static final String logFilePath = FilePathConstant.TEST_LOG_PATH;
 
     /**
      * 智谱大模型客户端
@@ -64,15 +63,16 @@ public class WarningDetectMain {
     public static void main(String[] args) {
         WarningDetectMain warningDetectMain = new WarningDetectMain();
 
-        // 1) 读取 Java 数据集
-        warningDetectMain.getJavaData();
+        // todo: 1) 读取数据集，参数为 java 或 cpp
+        warningDetectMain.getWarningData("cpp");
 
         // 2) 调用大模型进行警告检测，并且记录日志
         try (FileOutputStream fos = new FileOutputStream(logFilePath, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            for (int i = 0; i < javaWarningData.size(); i ++ ) {
-                WarningData warningData = javaWarningData.get(i);
+            // todo: 为了测试效果，可以修改运行的数据数量
+            for (int i = 0; i < 5; i ++ ) {
+                WarningData warningData = warningDataList.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
 
                 try {
@@ -112,20 +112,27 @@ public class WarningDetectMain {
     }
 
     /**
-     * 读取 Java 警告数据
+     * 读取数据集
+     *
+     * @param type: 取值为 java 或 cpp 读取对应数据集
      */
-    private void getJavaData() {
-        EasyExcel.read(FilePathConstant.JAVA_DATA_PATH, WarningData.class, new AnalysisEventListener<WarningData>() {
+    private void getWarningData(String type) {
+        String dataSetPath = "";
+
+        if ("cpp".equals(type)) dataSetPath = FilePathConstant.CPP_DATA_PATH;
+        else if ("java".equals(type)) dataSetPath = FilePathConstant.JAVA_DATA_PATH;
+        else throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数需要为 cpp 或 java，读取对应数据集");
+        EasyExcel.read(dataSetPath, WarningData.class, new AnalysisEventListener<WarningData>() {
             // 1) 每解析一行数据,该方法会被调用一次
             @Override
             public void invoke(WarningData warningData, AnalysisContext analysisContext) {
-                javaWarningData.add(warningData);
+                warningDataList.add(warningData);
             }
 
             // 2) 全部解析完成被调用
             @Override
             public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-                log.info("[x] 读取 Java 警告数据集完成，包含数据 {} 条", javaWarningData.size());
+                log.info("[x] 读取警告数据集完成，包含数据 {} 条", warningDataList.size());
             }
         }).sheet().doRead();
     }
