@@ -70,3 +70,27 @@ TP: 251 TN: 214 FP: 314 FN: 166 UK: 114
 Accuracy: 0.49206349206349204 Precision: 0.44424778761061945
 Recall: 0.6019184652278178 F1: 0.5112016293279023
 ------------------------------------------------------------------------
+Model: ChatGLM-3-Turbo
+Prompt: BOT_COT_FEW_SHOTS
+DataSet: CPP
+Total Test Cases Num: 364
+TP: 4 TN: 222 FP: 65 FN: 8 UK: 65
+Accuracy: 0.7558528428093646 Precision: 0.057971014492753624
+Recall: 0.3333333333333333 F1: 0.09876543209876544
+------------------------------------------------------------------------
+Model: ChatGLM-3-Turbo
+Prompt: NQD_COT_FEW_SHOTS
+DataSet: CPP
+Total Test Cases Num: 249
+TP: 4 TN: 112 FP: 100 FN: 4 UK: 29
+Accuracy: 0.5272727272727272 Precision: 0.038461538461538464
+Recall: 0.5 F1: 0.07142857142857144
+------------------------------------------------------------------------
+Model: ChatGLM-3-Turbo
+Prompt: NQD_COT_FEW_SHOTS
+DataSet: CPP
+Total Test Cases Num: 253
+TP: 11 TN: 121 FP: 56 FN: 2 UK: 63
+Accuracy: 0.6947368421052632 Precision: 0.16417910447761194
+Recall: 0.8461538461538461 F1: 0.275
+

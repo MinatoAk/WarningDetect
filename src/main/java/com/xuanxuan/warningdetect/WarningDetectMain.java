@@ -41,7 +41,7 @@ public class WarningDetectMain {
     private static final String systemPrompt = cppPromptTemplate.MULTIPLE_CHAT_SYSTEM_PROMPT;
 
     // todo: 修改日志位置为期望的日志路径
-    private static final String logFilePath = FilePathConstant.TEST_LOG_PATH;
+    private static final String logFilePath = FilePathConstant.CPP_CHATGLM3TURBO_UAF_COT_FEW_SHOTS_LOG_PATH;
 
     /**
      * 智谱大模型客户端
@@ -72,6 +72,7 @@ public class WarningDetectMain {
 
         // todo: 1) 读取数据集，参数为 java 或 cpp
         String type = "cpp";
+
         warningDetectMain.getWarningData(type);
         if ("cpp".equals(type)) warningDetectMain.getCPPJsonData();
 
@@ -79,7 +80,7 @@ public class WarningDetectMain {
         try (FileOutputStream fos = new FileOutputStream(logFilePath, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            for (int i = 0; i < 5; i ++ ) {
+            for (int i = 0; i < warningDataList.size(); i ++ ) {
                 WarningData warningData = warningDataList.get(i);
                 // todo: 如果是多轮对话 cpp 数据集则需要取消注释
                 cppWarningDataDTO cppWarningDataDTO = cppWarningDataDTOList.get(i);
@@ -98,7 +99,7 @@ public class WarningDetectMain {
                      * 多轮对话调用方式
                      */
                     // todo: 选择多轮对话的提示词模板类型: promptbuilder.MultipleChatMessage 文件夹下
-                    List<ChatMessage> messages = promptBuilder.buildBOFMutipleChatMessages(systemPrompt, cppWarningDataDTO);
+                    List<ChatMessage> messages = promptBuilder.buildUAFMutipleChatMessages(systemPrompt, cppWarningDataDTO);
                     String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.clientV4);
 
                     // 2.2) 解析出大模型给的结论
