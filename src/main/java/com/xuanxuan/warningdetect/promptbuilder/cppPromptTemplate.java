@@ -19,7 +19,9 @@ public interface cppPromptTemplate {
             "If the developer's comments indicate that the bug was intentional or confirm that the issue is benign and requires filtering, please report it as a false alarm.\n" +
             "In case You am still uncertain or require additional information, your answer should be unknown.\n" +
             "\n" +
-            "In the last line of your answer, You should conclude with '@@@ real bug @@@', '@@@ false alarm @@@', or '@@@ unknown @@@'.\n";
+            "In the last line of your answer, You should conclude with '@@@ real bug @@@', '@@@ false alarm @@@', or '@@@ unknown @@@'.\n" +
+            "\n" +
+            "You must give your answer in less then 400 tokens.\n";
 
     String BOT_COT_PROMPT =
             "# Task Description\n" +

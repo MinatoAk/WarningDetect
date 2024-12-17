@@ -71,7 +71,7 @@ public interface BOF_COT_ChatMessages {
             "    \"line\": 148,\n" +
             "    \"file\": \"sys/hashes/sha3.c\",\n" +
             "    \"qualifier\": \"Offset: [-1, 575] Size: 200 by call to `Keccak`.\",\n" +
-            "    \"Trace_None\":{\"filename\": \"sys/hashes/sha3.c\", \"line_number\": 148, \"column_number\": 5, \"description\": \"Call\"},\n" +
+            "    \"Trace\":{\"filename\": \"sys/hashes/sha3.c\", \"line_number\": 148, \"column_number\": 5, \"description\": \"Call\"},\n" +
             "  \n" +
             "}\n" +
             "```\n" +

@@ -56,24 +56,6 @@ public interface NQD_COT_ChatMessages {
             "@@@ false alarm @@@";
 
     String NQD_COT_Q2 =
-            "The bug report indicates a possible null pointer dereference of the variable buf at line 190 of the file bluetooth.c.\\\n" +
-            "This means that the code may be trying to access the memory location pointed by buf without checking if it is null or not.\\\n" +
-            "This could lead to a segmentation fault or undefined behavior.\\\n" +
-            "\n" +
-            "The trace shows that the function acl_read_cb is called from the function bluetooth_status_cb at line 230, with the third argument being null.\\\n" +
-            "This means that the variable buf is initialized to null at line 187 of acl_read_cb.\\\n" +
-            "Then, at line 190, the code tries to access the field len of buf, which could cause a null pointer dereference.\\\n" +
-            "\n" +
-            "However, this bug is actually a false alarm, because the code only executes line 190 if the condition size > 0 is true.\\\n" +
-            "This condition is checked by the USB driver before calling acl_read_cb, and it ensures that there is some data available to read from the endpoint.\\\n" +
-            "Therefore, the variable buf will not be null when line 190 is executed, because it will be assigned a valid buffer by the function net_buf_alloc at line 179.\\\n" +
-            "\n" +
-            "Therefore, this bug report is a false alarm and can be safely ignored. \n" +
-            "\n" +
-            "@@@ false alarm @@@\n" +
-            "\"\"\"\n" +
-            "\n" +
-            "npd_cot_q2 = \"\"\"\\\n" +
             "# Bug Report\n" +
             "```json\n" +
             "{\n" +
@@ -81,7 +63,7 @@ public interface NQD_COT_ChatMessages {
             "    \"line\": 303,\n" +
             "    \"file\": \"pkg/wakaama/contrib/lwm2m_client_connection.c\",\n" +
             "    \"qualifier\": \"pointer `pos` last assigned on line 300 could be null and is dereferenced by call to `strrchr()` at line 303, column 13.\",\n" +
-            "    \"Trace_None\": {\"filename\": \"pkg/wakaama/contrib/lwm2m_client_connection.c\", \"line_number\": 293, \"column_number\": 1, \"description\": \"start of procedure _parse_host_and_port()\"},\n" +
+            "    \"Trace\": {\"filename\": \"pkg/wakaama/contrib/lwm2m_client_connection.c\", \"line_number\": 293, \"column_number\": 1, \"description\": \"start of procedure _parse_host_and_port()\"},\n" +
             "}\n" +
             "```\n" +
             "\n" +

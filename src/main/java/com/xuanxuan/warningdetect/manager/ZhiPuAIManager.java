@@ -68,6 +68,17 @@ public class ZhiPuAIManager {
         return doRequest(messages, stream, temperature, clientV4);
     }
 
+    /**
+     * 直接传入 List<ChatMessage> 的通用方法
+     *
+     * @param messages
+     * @param clientV4
+     * @return
+     */
+    public String doMutipleChatRequest(List<ChatMessage> messages, ClientV4 clientV4) {
+        return doRequest(messages, Boolean.FALSE, stableTemperature, clientV4);
+    }
+
 
     /**
      * 通用请求

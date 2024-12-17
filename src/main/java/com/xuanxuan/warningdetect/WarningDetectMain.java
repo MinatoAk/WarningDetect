@@ -6,6 +6,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.xuanxuan.warningdetect.constant.APIKeys;
 import com.xuanxuan.warningdetect.constant.FilePathConstant;
 import com.xuanxuan.warningdetect.entity.WarningData;
+import com.xuanxuan.warningdetect.entity.cppWarningDataDTO;
 import com.xuanxuan.warningdetect.exception.BusinessException;
 import com.xuanxuan.warningdetect.exception.ErrorCode;
 import com.xuanxuan.warningdetect.manager.ZhiPuAIManager;
@@ -13,6 +14,7 @@ import com.xuanxuan.warningdetect.promptbuilder.PromptBuilder;
 import com.xuanxuan.warningdetect.promptbuilder.JavaPromptTemplate;
 import com.xuanxuan.warningdetect.promptbuilder.cppPromptTemplate;
 import com.zhipu.oapi.ClientV4;
+import com.zhipu.oapi.service.v4.model.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileOutputStream;
@@ -29,6 +31,11 @@ public class WarningDetectMain {
      * 存放警告数据集
      */
     private static final List<WarningData> warningDataList = new ArrayList<>();
+
+    /**
+     * 存放 cpp 数据从而转化成 JSON 格式
+     */
+    private static final List<cppWarningDataDTO> cppWarningDataDTOList = new ArrayList<>();
 
     // todo: 修改系统预设为希望运行的提示词模板
     private static final String systemPrompt = cppPromptTemplate.MULTIPLE_CHAT_SYSTEM_PROMPT;
@@ -64,22 +71,35 @@ public class WarningDetectMain {
         WarningDetectMain warningDetectMain = new WarningDetectMain();
 
         // todo: 1) 读取数据集，参数为 java 或 cpp
-        warningDetectMain.getWarningData("cpp");
+        String type = "cpp";
+        warningDetectMain.getWarningData(type);
+        if ("cpp".equals(type)) warningDetectMain.getCPPJsonData();
 
         // 2) 调用大模型进行警告检测，并且记录日志
         try (FileOutputStream fos = new FileOutputStream(logFilePath, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
-            // todo: 为了测试效果，可以修改运行的数据数量
             for (int i = 0; i < 5; i ++ ) {
                 WarningData warningData = warningDataList.get(i);
+                // todo: 如果是多轮对话 cpp 数据集则需要取消注释
+                cppWarningDataDTO cppWarningDataDTO = cppWarningDataDTOList.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
 
                 try {
                     // 2.1) 请求大模型回答
-                    // todo: 如果是多轮对话，需要使用多轮对话构造器
-                    String userPrompt = promptBuilder.buildUserPrompt(warningData);
-                    String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
+                    // todo: 单轮对话选择单轮调用方式；多轮对话，需要使用多轮对话构造器；
+                    /**
+                     * 单轮对话调用方式
+                     */
+                    // String userPrompt = promptBuilder.buildUserPrompt(warningData);
+                    // String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
+
+                    /**
+                     * 多轮对话调用方式
+                     */
+                    // todo: 选择多轮对话的提示词模板类型: promptbuilder.MultipleChatMessage 文件夹下
+                    List<ChatMessage> messages = promptBuilder.buildBOFMutipleChatMessages(systemPrompt, cppWarningDataDTO);
+                    String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.clientV4);
 
                     // 2.2) 解析出大模型给的结论
                     String finalLabel = warningDetectMain.analyzeLabel(res);
@@ -134,6 +154,25 @@ public class WarningDetectMain {
             @Override
             public void doAfterAllAnalysed(AnalysisContext analysisContext) {
                 log.info("[x] 读取警告数据集完成，包含数据 {} 条", warningDataList.size());
+            }
+        }).sheet().doRead();
+    }
+
+    /**
+     * 读取 cpp 序列化数据集
+     */
+    private void getCPPJsonData() {
+        EasyExcel.read(FilePathConstant.CPP_DATA_PATH, cppWarningDataDTO.class, new AnalysisEventListener<cppWarningDataDTO>() {
+            // 1) 每解析一行数据,该方法会被调用一次
+            @Override
+            public void invoke(cppWarningDataDTO cppWarningDataDTO, AnalysisContext analysisContext) {
+                cppWarningDataDTOList.add(cppWarningDataDTO);
+            }
+
+            // 2) 全部解析完成被调用
+            @Override
+            public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+                log.info("[x] 序列化 cpp 数据集，包含数据 {} 条", cppWarningDataDTOList.size());
             }
         }).sheet().doRead();
     }

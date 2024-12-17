@@ -9,7 +9,7 @@ public interface UAF_COT_ChatMessages {
             "    \"line\": \"2146\",\n" +
             "    \"file\": \"debug.c\",\n" +
             "    \"qualifier\": \"Use of memory after it is freed\",\n" +
-            "    \"Trace_Nnode\":{\"filename\": \"debug.c\", \"line_number\": \"4833\", \"column_number\": \"1\", \"description\": \"Entered call from 'delete_breakpoint'\"},\n" +
+            "    \"Trace\":{\"filename\": \"debug.c\", \"line_number\": \"4833\", \"column_number\": \"1\", \"description\": \"Entered call from 'delete_breakpoint'\"},\n" +
             "}\n" +
             "```\n" +
             "\n" +
@@ -54,7 +54,7 @@ public interface UAF_COT_ChatMessages {
             "    \"line\": \"48\",\n" +
             "    \"file\": \"aaa_15.c\",\n" +
             "    \"qualifier\":\"Use of memory after it is freed\",\n" +
-            "    \"Trace_None\": {\"filename\": \"aaa_15.c\", \"line_number\": \"32\", \"column_number\": \"24\", \"description\": \"Memory is allocated\"},\n" +
+            "    \"Trace\": {\"filename\": \"aaa_15.c\", \"line_number\": \"32\", \"column_number\": \"24\", \"description\": \"Memory is allocated\"},\n" +
             "\n" +
             "}\n" +
             "```\n" +
