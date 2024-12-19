@@ -119,8 +119,6 @@ public class PromptBuilder {
         return messages;
     }
 
-
-
     /**
      * 构造 cpp 多轮对话的用户输入
      */

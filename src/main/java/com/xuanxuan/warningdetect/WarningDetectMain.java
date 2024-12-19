@@ -38,10 +38,10 @@ public class WarningDetectMain {
     private static final List<cppWarningDataDTO> cppWarningDataDTOList = new ArrayList<>();
 
     // todo: 修改系统预设为希望运行的提示词模板
-    private static final String systemPrompt = cppPromptTemplate.MULTIPLE_CHAT_SYSTEM_PROMPT;
+    private static final String systemPrompt = cppPromptTemplate.UAF_COT_PROMPT;
 
     // todo: 修改日志位置为期望的日志路径
-    private static final String logFilePath = FilePathConstant.CPP_CHATGLM3TURBO_UAF_COT_FEW_SHOTS_LOG_PATH;
+    private static final String logFilePath = FilePathConstant.CPP_CHATGLM3TURBO_UAF_COT_LOG_PATH;
 
     /**
      * 智谱大模型客户端
@@ -72,48 +72,50 @@ public class WarningDetectMain {
 
         // todo: 1) 读取数据集，参数为 java 或 cpp
         String type = "cpp";
-
         warningDetectMain.getWarningData(type);
-        if ("cpp".equals(type)) warningDetectMain.getCPPJsonData();
 
-        // 2) 调用大模型进行警告检测，并且记录日志
+        // todo: 2) 如果使用 FewShots 模板需要读 JSON 格式完整数据
+        // warningDetectMain.getCPPJsonData();
+
+        // 3) 调用大模型进行警告检测，并且记录日志
         try (FileOutputStream fos = new FileOutputStream(logFilePath, true);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
 
             for (int i = 0; i < warningDataList.size(); i ++ ) {
                 WarningData warningData = warningDataList.get(i);
-                // todo: 如果是多轮对话 cpp 数据集则需要取消注释
-                cppWarningDataDTO cppWarningDataDTO = cppWarningDataDTOList.get(i);
                 log.info("[x] Now Running Test Case {}: Index {}", i, warningData.getId());
 
+                // todo: 如果是 FewShots 则需要取消注释
+                // cppWarningDataDTO cppWarningDataDTO = cppWarningDataDTOList.get(i);
+
                 try {
-                    // 2.1) 请求大模型回答
-                    // todo: 单轮对话选择单轮调用方式；多轮对话，需要使用多轮对话构造器；
+                    // 3.1) 请求大模型回答
+                    // todo: 选择单轮或 FewShots 调用模式
                     /**
                      * 单轮对话调用方式
                      */
-                    // String userPrompt = promptBuilder.buildUserPrompt(warningData);
-                    // String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
+                     String userPrompt = promptBuilder.buildUserPrompt(warningData);
+                     String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
 
                     /**
-                     * 多轮对话调用方式
+                     * 多轮对话调用方式 FewShots
                      */
-                    // todo: 选择多轮对话的提示词模板类型: promptbuilder.MultipleChatMessage 文件夹下
-                    List<ChatMessage> messages = promptBuilder.buildUAFMutipleChatMessages(systemPrompt, cppWarningDataDTO);
-                    String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.clientV4);
+                    // todo: 选择 FewShots 的提示词模板类型: promptbuilder.MultipleChatMessage 文件夹下
+//                    List<ChatMessage> messages = promptBuilder.buildUAFMutipleChatMessages(systemPrompt, cppWarningDataDTO);
+//                    String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.clientV4);
 
-                    // 2.2) 解析出大模型给的结论
+                    // 3.2) 解析出大模型给的结论
                     String finalLabel = warningDetectMain.analyzeLabel(res);
                     String trueLabel = warningData.getLabel();
 
-                    // 2.3) 统计大模型结果
+                    // 3.3) 统计大模型结果
                     if ("TP".equals(finalLabel) && "TP".equals(trueLabel)) TPNum ++;
                     else if ("TP".equals(finalLabel) && "FP".equals(trueLabel)) FPNum ++;
                     else if ("FP".equals(finalLabel) && "TP".equals(trueLabel)) FNNum ++;
                     else if ("FP".equals(finalLabel) && "FP".equals(trueLabel)) TNNum ++;
                     else UKNum ++;
 
-                    // 2.4) 日志记录大模型回答信息
+                    // 3.4) 日志记录大模型回答信息
                     String formattedRes = String.format("%d - Java Test Case %d:\n%s\n", i, warningData.getId(), res);
                     osw.write(formattedRes);
                     osw.write("Final Label: " + finalLabel + " True Label:" + trueLabel + "\n");
@@ -121,7 +123,7 @@ public class WarningDetectMain {
 
                 } catch (Exception e) {
                     log.error("[x ERROR x] Error Test Case {}: Index {}", i, warningData.getId());
-                    // 2.5) 调用超时的记录，最后可以单独请求重试
+                    // 3.5) 调用超时的记录，最后可以单独请求重试
                     warningDetectMain.recordErrorData(i, warningData.getId());
                 }
             }
@@ -129,7 +131,7 @@ public class WarningDetectMain {
             e.printStackTrace();
         }
 
-        // 3) 评估结果计算，并且记录日志
+        // 4) 评估结果计算，并且记录日志
         warningDetectMain.getResultData();
     }
 

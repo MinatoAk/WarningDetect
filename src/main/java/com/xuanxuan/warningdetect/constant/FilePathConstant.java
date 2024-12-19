@@ -39,10 +39,10 @@ public interface FilePathConstant {
     String JAVA_CHATGLM3TURBO_MUL_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/MUL_COT.log";
     String JAVA_CHATGLM3TURBO_PER_COT_LOG_PATH = "logs/Java/ChatGLM3Turbo/PER_COT.log";
 
-    String CPP_CHATGLM3TURBO_BOF_COT_FEW_SHOTS_LOG_PATH = "logs/cpp/ChatGLM3Turbo/BOT_COT_FEW_SHOTS.log";
+    String CPP_CHATGLM3TURBO_BOF_COT_FEW_SHOTS_LOG_PATH = "logs/cpp/ChatGLM3Turbo/BOF_COT_FEW_SHOTS.log";
     String CPP_CHATGLM3TURBO_NQD_COT_FEW_SHOTS_LOG_PATH = "logs/cpp/ChatGLM3Turbo/NQD_COT_FEW_SHOTS.log";
     String CPP_CHATGLM3TURBO_UAF_COT_FEW_SHOTS_LOG_PATH = "logs/cpp/ChatGLM3Turbo/UAF_COT_FEW_SHOTS.log";
-    String CPP_CHATGLM3TURBO_BOF_COT_LOG_PATH = "logs/cpp/ChatGLM3Turbo/BOT_COT.log";
+    String CPP_CHATGLM3TURBO_BOF_COT_LOG_PATH = "logs/cpp/ChatGLM3Turbo/BOF_COT.log";
     String CPP_CHATGLM3TURBO_NQD_COT_LOG_PATH = "logs/cpp/ChatGLM3Turbo/NQD_COT.log";
     String CPP_CHATGLM3TURBO_UAF_COT_LOG_PATH = "logs/cpp/ChatGLM3Turbo/UAF_COT.log";
 }

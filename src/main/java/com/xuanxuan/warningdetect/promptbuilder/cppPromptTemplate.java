@@ -23,7 +23,7 @@ public interface cppPromptTemplate {
             "\n" +
             "You must give your answer in less then 400 tokens.\n";
 
-    String BOT_COT_PROMPT =
+    String BOF_COT_PROMPT =
             "# Task Description\n" +
             "Now you should act as an expert in C/C++ code review, You possess advanced skills in analyzing program code using well-known static analysis tools.\n" +
             "Additionally, You have extensive experience in finding a type of bug called buffer overflow/overrun or Out-of-bound asscess.\n" +
