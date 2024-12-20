@@ -2,7 +2,7 @@
 
 使用不同的提示词模板类型，调用大模型提供的 SDK，验证静态分析工具得到的程序警告的正确性；
 
-
+<br>
 
 ## 1 Quick Start
 
@@ -33,8 +33,6 @@ String userPrompt = promptBuilder.buildUserPrompt(warningData);
 String res = zhiPuAIManager.doStableSyncRequest(systemPrompt, userPrompt, warningDetectMain.clientV4);
 ```
 
-</br>
-
 ### 1.2 Few - Shots
 
 只有 `cpp` 数据集提供了 Few Shots 提示词模板，需要对 `cpp` 数据集进行额外处理；
@@ -52,8 +50,6 @@ List<ChatMessage> messages =
     promptBuilder.buildUAFMutipleChatMessages(systemPrompt, cppWarningDataDTO);
 String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.clientV4);
 ```
-
-</br>
 
 </br>
 
