@@ -55,7 +55,9 @@ String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.cli
 
 ## 2 Docs
 
-`logs` 文件夹下为所有的数据集运行记录:
+1) `report` 文件夹下为本实验的实验报告；
+
+2) `logs` 文件夹下为所有的数据集运行记录:
 
 - `error_data_index.log` 记录当前轮运行过程中调用超时的数据，后续可以重试回捞实现补偿；
 - `test.log` 为测试日志，供开发人员使用；
@@ -64,4 +66,4 @@ String res = zhiPuAIManager.doMutipleChatRequest(messages, warningDetectMain.cli
 
 </br>
 
-`datas` 文件夹下为使用的数据集，包含 `cpp` 数据 956 条，`Java` 数据 1090 条；
+3) `datas` 文件夹下为使用的数据集，包含 `cpp` 数据 956 条，`Java` 数据 1090 条；
